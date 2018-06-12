@@ -1,3 +1,45 @@
+#Project 
+Our research lab is working on building a drone to identify damage on aircraft via an autonomous visual inspection
+
+##Parrot Instructions
+
+1. run source /opt/ros/indigo/setup.bash
+2. Connect SLAMDUNK with your laptop through USB interface.
+3. It will show Wired connection 1 probably, which is the name of the connection. (Use the newest connection)
+4. Go to edit connections, click on the wired connection, and then click on edit.
+5. Go to Ethernet tab and select MAC address of the SLAMDUNK.
+6. Go to IPv4 Setting tab, select change method to shared to other computers in the dropdown menu.
+9. use ifconfig to find the name of the usb port of the parrot
+10. run `sudo arp-scan --localnet --interface=enp0s20u2` (the last part is the name of the usb port for parrot) to find the ip address.
+11. run `export ROS_MASTER_URI=http://192.168.45.1:11311` instead of 192.168.45.1 add the ip of the parrot
+12. run `export ROS_HOSTNAME= (insert ip of you your computer after the equals)`
+13. run `rosnode list`     you should have the out puts 
+Output:
+```
+/rosout
+/slamdunk_node
+```
+14. run $ `rosparam get /properties/ro_parrot_build_version`    it should output 1.0.0 or the version number of the firmware
+the page with instructions to set up the stuff and other features as well: http://developer.parrot.com/docs/slamdunk/#overview
+
+### Forked from [puzzledqs/BBox-Label-Tool](https://github.com/puzzledqs/BBox-Label-Tool)
+## Improvements
+1. Add multi-class support 
+2. Change some of the color-candidates for better display
+3. Fix the 'Example' filepath for convenience
+4. Change the image format from '.JPEG' to '.JPG'
+
+## New Usage
+### For multi-class task, modify 'class.txt' with your own class-candidates and before labeling bbox, choose the 'Current Class' in the Combobox and make sure you click 'ComfirmClass' button.
+
+### The remaining usage is the same as the origin one.
+
+------------------------------------
+
+**Contact info**: jxgu1016@gmail.com
+
+------------------------------------
+
 BBox-Label-Tool
 ===============
 
