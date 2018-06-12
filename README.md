@@ -1,7 +1,7 @@
-#Project 
+# Project 
 Our research lab is working on building a drone to identify damage on aircraft via an autonomous visual inspection
 
-##Parrot Instructions
+## Parrot Instructions
 
 1. run source /opt/ros/indigo/setup.bash
 2. Connect SLAMDUNK with your laptop through USB interface.
@@ -22,14 +22,7 @@ Output:
 14. run $ `rosparam get /properties/ro_parrot_build_version`    it should output 1.0.0 or the version number of the firmware
 the page with instructions to set up the stuff and other features as well: http://developer.parrot.com/docs/slamdunk/#overview
 
-### Forked from [puzzledqs/BBox-Label-Tool](https://github.com/puzzledqs/BBox-Label-Tool)
-## Improvements
-1. Add multi-class support 
-2. Change some of the color-candidates for better display
-3. Fix the 'Example' filepath for convenience
-4. Change the image format from '.JPEG' to '.JPG'
-
-Training instructions
+## Training instructions
 
 The following are a modified version of the instructions found on the yolo website
 
@@ -39,6 +32,14 @@ The following are a modified version of the instructions found on the yolo websi
 4. run the convert.py script to format the annotations in yolo form 
 5. Set up the darknet config 
 6. run `./darknet detector train cfg/lockheed.data cfg/yolov3.cfg <weights(if needed)>`
+
+
+### Forked from [puzzledqs/BBox-Label-Tool](https://github.com/puzzledqs/BBox-Label-Tool)
+## Improvements
+1. Add multi-class support 
+2. Change some of the color-candidates for better display
+3. Fix the 'Example' filepath for convenience
+4. Change the image format from '.JPEG' to '.JPG'
 
 ## New Usage
 ### For multi-class task, modify 'class.txt' with your own class-candidates and before labeling bbox, choose the 'Current Class' in the Combobox and make sure you click 'ComfirmClass' button.
