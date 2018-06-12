@@ -20,7 +20,7 @@ Output:
 /slamdunk_node
 ```
 14. run $ `rosparam get /properties/ro_parrot_build_version`    it should output 1.0.0 or the version number of the firmware
-
+the page with instructions to set up the stuff and other features as well: http://developer.parrot.com/docs/slamdunk/#overview
 
 ### Forked from [puzzledqs/BBox-Label-Tool](https://github.com/puzzledqs/BBox-Label-Tool)
 ## Improvements
