@@ -1,7 +1,7 @@
-#Project 
+# Project 
 Our research lab is working on building a drone to identify damage on aircraft via an autonomous visual inspection
 
-##Parrot Instructions
+## Parrot Instructions
 
 1. run source /opt/ros/indigo/setup.bash
 2. Connect SLAMDUNK with your laptop through USB interface.
@@ -20,6 +20,18 @@ Output:
 /slamdunk_node
 ```
 14. run $ `rosparam get /properties/ro_parrot_build_version`    it should output 1.0.0 or the version number of the firmware
+
+## Training instructions 
+
+The following are a modified version of the instructions found on the yolo [website](https://pjreddie.com/darknet/yolo/)
+
+1.) Strat by collecting images. the goal is to collect close to 500 img/class
+2.) create a new folder in BBox-Label-Tool/Images 
+We are currently trying to divide up our data set into 500 ish image chuncks 
+3.) run main.py and annotate images.
+4.) run the convert.py script to format the annotations in yolo form 
+5.) Set up the darknet config 
+6.) run `./darknet detector train cfg/lockheed.data cfg/yolov3.cfg <weights(if needed)>`
 
 
 ### Forked from [puzzledqs/BBox-Label-Tool](https://github.com/puzzledqs/BBox-Label-Tool)
