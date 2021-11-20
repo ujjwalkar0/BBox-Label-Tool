@@ -55,21 +55,31 @@ class LabelTool:
         
             f = open(self.classcandidate_filename,'w')
             for i in self.class_list:
-                print(self.class_list)
-                f.write(i)
+                # print(i,'\n')
+                # print(self.class_list)
+                f.write(i+'\n')
             f.close()
+        
+        else:
+            with open(self.classcandidate_filename,'r') as f:
+                self.class_list = f.read().splitlines()
+
 
         # initialize mouse state
         self.STATE = {}
         self.STATE['click'] = 0
         self.STATE['x'], self.STATE['y'] = 0, 0
 
+        # Innitialize Id
+        self.id = 0
+
         # reference to bbox
         self.bboxIdList = []
         self.bboxId = None
-        self.bboxList = []
+        self.bboxList = [self.id]
         self.hl = None
         self.vl = None
+
 
         
         # ----------------- GUI stuff ---------------------
@@ -111,7 +121,7 @@ class LabelTool:
         if os.path.exists(self.classcandidate_filename):
             with open(self.classcandidate_filename) as cf:
                 for line in cf.readlines():
-                    # print line
+                    # print(line)
                     self.cla_can_temp.append(line.strip('\n'))
         # print self.cla_can_temp
         self.classcandidate['values'] = self.cla_can_temp
@@ -173,7 +183,7 @@ class LabelTool:
         self.entry_text.set(self.imageDir)
         # get image list
         self.imageList = glob.glob(os.path.join(self.imageDir, FILES_FORMAT_REGEX))
-        print(self.imageList)
+        # print(self.imageList)
         if len(self.imageList) == 0:
             self.print_log('Files .jpg or .png NOT FOUND in the specified dir!')
             return
@@ -193,12 +203,12 @@ class LabelTool:
         filelist = glob.glob(os.path.join(self.egDir, FILES_FORMAT_REGEX))
         self.tmp = []
         self.egList = []
-        print(filelist)
+        # print(filelist)
         # random.shuffle(filelist)
         for (i, f) in enumerate(filelist):
             if i == 3:
                 break
-            print(f)
+            # print(f)
             im = Image.open(f)
             r = min(SIZE[0] / im.size[0], SIZE[1] / im.size[1])
             new_size = int(r * im.size[0]), int(r * im.size[1])
@@ -248,7 +258,7 @@ class LabelTool:
                                                                            int(tmp[2]), int(tmp[3])))
                         self.listbox.itemconfig(len(self.bboxIdList) - 1,
                                                 fg=COLORS[(len(self.bboxIdList) - 1) % len(COLORS)])
-
+                        # print(tmp,self.bboxList)
                     else:
                         self.save_to_yolo_format.set(1)
                         width = self.tkimg.width()
@@ -272,14 +282,21 @@ class LabelTool:
             with open(self.labelfilename, 'w') as f:
                 if self.save_to_yolo_format.get():
                     for bbox in self.bboxList:
-                        f.write(' '.join(map(str, bbox)) + '\n')
+                        # box = ' '.join(map(str, bbox))
+                        im=Image.open(self.imagepath)
+                        # w= int(im.size[0])
+                        # h= int(im.size[1])
+                        res = self.convert_to_yolo_format(im.size,bbox[0],bbox[1:])
+                        print(' '.join(map(str, res)))
+                        f.write(' '.join(map(str, res)) + '\n')
+
+                        # pass
+                    # f.write(' '.join(map(str, bbox)) + '\n')
                 else:
                     f.write('%d\n' %len(self.bboxList))
                     for bbox in self.bboxList:
                         f.write(' '.join(map(str, bbox)) + '\n')
             self.print_log('Label saved to ' + self.labelname)
-			
-			
 			
 			
     def mouseClick(self, event):
@@ -288,7 +305,7 @@ class LabelTool:
         else:
             x1, x2 = min(self.STATE['x'], event.x), max(self.STATE['x'], event.x)
             y1, y2 = min(self.STATE['y'], event.y), max(self.STATE['y'], event.y)
-            self.bboxList.append((x1, y1, x2, y2))
+            self.bboxList.append((self.id,x1, y1, x2, y2))
             self.bboxIdList.append(self.bboxId)
             self.bboxId = None
             self.listbox.insert(END, '(%d, %d) -> (%d, %d)' %(x1, y1, x2, y2))
@@ -375,9 +392,6 @@ class LabelTool:
                     self.cur -= 1
                     self.loadImage()   
                 
-                
-
-
     def gotoImage(self):
         idx = int(self.idxEntry.get())
         if 1 <= idx and idx <= self.total:
@@ -388,15 +402,15 @@ class LabelTool:
     def print_log(self, msg):
         self.info_box.insert(END, msg + '\n')
     
-    
     def setClass(self, event):
         self.currentLabelclass = self.classcandidate.get()
+        self.id = self.class_list.index(self.currentLabelclass)
         print('set label class to : %s', self.currentLabelclass)
 
     #convert func from convert.py Guanghan Ning
-    def convert_to_yolo_format(self,widht_img, height_img, box):
-        dw = 1./widht_img
-        dh = 1./height_img
+    def convert_to_yolo_format(self,size,clss ,box):
+        dw = 1./size[0]
+        dh = 1./size[1]
         x = (box[0] + box[1])/2.0
         y = (box[2] + box[3])/2.0
         w = box[1] - box[0]
@@ -405,7 +419,7 @@ class LabelTool:
         w = w*dw
         y = y*dh
         h = h*dh
-        return (x,y,w,h)
+        return (clss,x,y,w,h)
 
     #TODO save file to xml format for VOC    
     def convert_from_yolo_format(self,widht_img, height_img, box):
@@ -419,13 +433,11 @@ class LabelTool:
         ymax = int(centerY + (bboxH/2))
         return (xmin,ymin,xmax,ymax)
 
-
     def create_images_list(self):
          with open(self.imageDir + 'images_list.txt', 'w') as inFile:
              for im in self.imageList:
                 inFile.write(im+'\n')
              
-
 if __name__ == '__main__':
     root = Tk()
     tool = LabelTool(root)
